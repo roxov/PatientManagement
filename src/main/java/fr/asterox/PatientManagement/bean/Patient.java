@@ -4,10 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "patient")
@@ -21,17 +25,51 @@ public class Patient {
 	private String givenName;
 	@Column(name = "LAST_NAME")
 	private String familyName;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birthdate;
 	private String address;
 	private String phone;
-	private boolean sex;
+	@Enumerated(EnumType.STRING)
+	private Sex sex;
+
+	public enum Sex {
+		M("M"), F("F");
+
+		private String name;
+
+		Sex(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+	};
 
 	public Patient() {
 		super();
 	}
 
+	public Patient(String givenName, String familyName, String address, String phone) {
+		super();
+		this.givenName = givenName;
+		this.familyName = familyName;
+		this.address = address;
+		this.phone = phone;
+	}
+
+	public Patient(String givenName, String familyName, Date birthdate, String address, String phone, Sex sex) {
+		super();
+		this.givenName = givenName;
+		this.familyName = familyName;
+		this.birthdate = birthdate;
+		this.address = address;
+		this.phone = phone;
+		this.sex = sex;
+	}
+
 	public Patient(Long patientId, String givenName, String familyName, Date birthdate, String address, String phone,
-			boolean sex) {
+			Sex sex) {
 		super();
 		this.patientId = patientId;
 		this.givenName = givenName;
@@ -90,20 +128,11 @@ public class Patient {
 		this.phone = phone;
 	}
 
-	public String getSex() {
-		boolean sex = false;
-		this.sex = sex;
-		if (sex = true) {
-			return "F";
-		}
-		return "M";
+	public Sex getSex() {
+		return sex;
 	}
 
-	public void setSex(String stringSex) {
-		boolean sex = false;
-		if (stringSex.equals("F")) {
-			sex = true;
-		}
+	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
 
@@ -117,7 +146,7 @@ public class Patient {
 		result = prime * result + ((givenName == null) ? 0 : givenName.hashCode());
 		result = prime * result + ((patientId == null) ? 0 : patientId.hashCode());
 		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
-		result = prime * result + (sex ? 1231 : 1237);
+		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
 		return result;
 	}
 
