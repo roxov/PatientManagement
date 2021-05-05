@@ -20,7 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import fr.asterox.PatientManagement.bean.Patient;
-import fr.asterox.PatientManagement.consumer.IPatientRepository;
+import fr.asterox.PatientManagement.repository.IPatientRepository;
 import fr.asterox.PatientManagement.util.NoPatientException;
 
 @ExtendWith(MockitoExtension.class)
@@ -135,7 +135,7 @@ public class PatientServiceTest {
 		when(patientRepository.save(patient)).thenReturn(patient);
 
 		// WHEN
-		Patient updatedPatient = patientService.updatePatient(patient);
+		Patient updatedPatient = patientService.updatePatient(1L, patient);
 
 		// THEN
 		verify(patientRepository, Mockito.times(1)).findById(any(Long.class));
@@ -154,7 +154,7 @@ public class PatientServiceTest {
 
 		// WHEN
 		Exception exception = assertThrows(NoPatientException.class, () -> {
-			patientService.updatePatient(patient);
+			patientService.updatePatient(1L, patient);
 		});
 
 		// THEN

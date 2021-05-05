@@ -12,8 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.NonNull;
+
+import lombok.RequiredArgsConstructor;
 
 @Entity
+@RequiredArgsConstructor
 @Table(name = "patient")
 public class Patient {
 
@@ -22,14 +26,20 @@ public class Patient {
 	@Column(name = "PATIENT_ID")
 	private Long patientId;
 	@Column(name = "FIRST_NAME")
+	@NonNull
 	private String givenName;
 	@Column(name = "LAST_NAME")
+	@NonNull
 	private String familyName;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@NonNull
 	private Date birthdate;
+	@NonNull
 	private String address;
+	@NonNull
 	private String phone;
 	@Enumerated(EnumType.STRING)
+	@NonNull
 	private Sex sex;
 
 	public enum Sex {

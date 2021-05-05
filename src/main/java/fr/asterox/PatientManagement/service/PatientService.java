@@ -9,15 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.asterox.PatientManagement.bean.Patient;
-import fr.asterox.PatientManagement.consumer.IPatientRepository;
+import fr.asterox.PatientManagement.repository.IPatientRepository;
 import fr.asterox.PatientManagement.util.ExistingPatientException;
 import fr.asterox.PatientManagement.util.NoPatientException;
 
 @Service
 public class PatientService implements IPatientService {
-
 	@Autowired
-	IPatientRepository patientRepository;
+	private IPatientRepository patientRepository;
 
 	private static final Logger LOGGER = LogManager.getLogger(PatientService.class);
 
@@ -44,13 +43,13 @@ public class PatientService implements IPatientService {
 			throw new NoPatientException("This patient does not exist.");
 		}
 
-		LOGGER.info("Creating UserAccount");
+		LOGGER.info("Getting patient");
 		return patient.get();
 	}
 
 	@Override
-	public Patient updatePatient(Patient patient) {
-		Optional<Patient> searchedPatient = patientRepository.findById(patient.getPatientId());
+	public Patient updatePatient(Long patientId, Patient patient) {
+		Optional<Patient> searchedPatient = patientRepository.findById(patientId);
 
 		if (searchedPatient.isEmpty()) {
 			LOGGER.info("The requested patient does not exist.");
@@ -70,6 +69,16 @@ public class PatientService implements IPatientService {
 
 		LOGGER.info("Deleting patient");
 		patientRepository.deleteById(patientId);
+	}
+
+	public boolean askExistenceOfPatient(Long patientId) {
+		Optional<Patient> patient = patientRepository.findById(patientId);
+
+		if (patient.isEmpty()) {
+			LOGGER.info("The requested patient does not exist.");
+			return false;
+		}
+		return true;
 	}
 
 	public IPatientRepository setPatientRepository(IPatientRepository patientRepository) {

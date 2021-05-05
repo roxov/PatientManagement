@@ -38,11 +38,19 @@ public class PatientRestController {
 	}
 
 	@PutMapping(value = "/{id}")
-	public Patient updatePatient(@RequestBody Patient patient) {
+	public Patient updatePatient(@PathVariable("id") @NotNull(message = "patientId is compulsory") Long patientId,
+			@RequestBody Patient patient) {
 		if (patient.getPatientId() == null) {
 			throw new IllegalArgumentException("The id is mandatory");
 		}
 		LOGGER.info("Updating patient");
-		return patientService.updatePatient(patient);
+		return patientService.updatePatient(patientId, patient);
+	}
+
+	@GetMapping(value = "/exist/{id}")
+	public boolean askExistenceOfPatient(
+			@PathVariable("id") @NotNull(message = "patientId is compulsory") Long patientId) {
+		LOGGER.info("Asking for existence of patient with id : " + patientId);
+		return patientService.askExistenceOfPatient(patientId);
 	}
 }

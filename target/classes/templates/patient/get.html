@@ -37,7 +37,11 @@
 					<td th:text="*{birthdate}"></td>
 					<td th:text="*{address}"></td>
 					<td th:text="*{phone}"></td>
-					<td style="width: 25%" th:text="*{sex}"></td>					
+					<td style="width: 10%" th:text="*{sex}"></td>
+					<td style="width: 15%" class="text-center">
+						<a th:href="@{/patient/update/{id}(id=${patient.patientId})}">Edit</a>&nbsp;|&nbsp;
+						<a th:href="@{/patient/delete/{id}(id=${patient.patientId})}">Delete</a>
+					</td>					
 				</tr>
 			</tbody>
 		</table>

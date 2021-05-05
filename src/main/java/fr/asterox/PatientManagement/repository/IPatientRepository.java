@@ -1,4 +1,4 @@
-package fr.asterox.PatientManagement.consumer;
+package fr.asterox.PatientManagement.repository;
 
 import java.util.List;
 

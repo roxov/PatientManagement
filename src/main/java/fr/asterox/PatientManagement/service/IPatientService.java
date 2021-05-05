@@ -12,5 +12,5 @@ public interface IPatientService {
 
 	public Patient findById(Long patientId);
 
-	public Patient updatePatient(Patient patient);
+	public Patient updatePatient(Long patientId, Patient patient);
 }

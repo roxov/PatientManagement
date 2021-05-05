@@ -1,11 +1,15 @@
 package fr.asterox.PatientManagement.controller;
 
+import java.net.URI;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.asterox.PatientManagement.bean.Patient;
-import fr.asterox.PatientManagement.consumer.IPatientRepository;
+import fr.asterox.PatientManagement.repository.IPatientRepository;
 import fr.asterox.PatientManagement.service.PatientService;
 
 @Controller
@@ -43,15 +47,17 @@ public class PatientController {
 	}
 
 	@PostMapping("/patient/validate")
-	public String validate(@Valid Patient patient, BindingResult result, Model model) {
+	public ResponseEntity<Void> validate(@Valid Patient patient, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			LOGGER.error("There are some incorrect datas.");
-			return "redirect:/patient/list";
+			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/patient/list"))
+					.build();
 		}
 		LOGGER.info("Adding new patient");
 		patientService.addPatient(patient);
-		model.addAttribute("patients", patientRepository.findAll());
-		return "redirect:/patient/list";
+		LOGGER.info("Redirecting to port 8080");
+		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/patient/list"))
+				.build();
 	}
 
 	@GetMapping("/patient/get/{id}")
@@ -72,24 +78,27 @@ public class PatientController {
 	}
 
 	@PostMapping("/patient/update/{id}")
-	public String updatePatient(@PathVariable("id") Long patientId, @Valid Patient patient, BindingResult result,
-			Model model) {
+	public ResponseEntity<Void> updateSelectedPatient(@PathVariable("id") Long patientId, @Valid Patient patient,
+			BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			LOGGER.error("There are some incorrect datas.");
-			return "patient/update";
+			return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/patient/list"))
+					.build();
 		}
 		LOGGER.info("Updating patient");
-		patientService.updatePatient(patient);
-		model.addAttribute("patients", patientRepository.findAll());
-		return "redirect:/patient/list";
+		patientService.updatePatient(patientId, patient);
+		LOGGER.info("Redirecting to port 8080");
+		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/patient/list"))
+				.build();
 	}
 
 	@GetMapping("/patient/delete/{id}")
-	public String deletePatient(@PathVariable("id") Long patientId, Model model) {
+	public ResponseEntity<Void> deletePatient(@PathVariable("id") Long patientId, Model model) {
 		LOGGER.info("Deleting patient");
 		patientService.deletePatient(patientId);
-		model.addAttribute("patients", patientRepository.findAll());
-		return "redirect:/patient/list";
+		LOGGER.info("Redirecting to port 8080");
+		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/patient/list"))
+				.build();
 	}
 
 }
