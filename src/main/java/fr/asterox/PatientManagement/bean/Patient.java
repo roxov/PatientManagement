@@ -14,10 +14,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.NonNull;
 
-import lombok.RequiredArgsConstructor;
-
 @Entity
-@RequiredArgsConstructor
 @Table(name = "patient")
 public class Patient {
 

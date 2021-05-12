@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,7 +42,6 @@ public class PatientRestControllerIT {
 		dataBaseConfig.clearDataBase();
 	}
 
-	@WithMockUser
 	@Test
 	void givenAPatient_whenPostPatient_thenReturns200AndPatient() throws Exception {
 		Patient testNonePatient = new Patient("Test", "TestNone", new Date(1966 - 12 - 31), "1 Brookside St",
@@ -54,7 +52,6 @@ public class PatientRestControllerIT {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.address").value("1 Brookside St"));
 	}
 
-	@WithMockUser
 	@Test
 	public void givenAPatientId_whenGetPatient_thenReturnOkAndPatient() throws Exception {
 		// GIVEN
@@ -73,7 +70,23 @@ public class PatientRestControllerIT {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.sex").value("M"));
 	}
 
-	@WithMockUser
+	@Test
+	public void givenAPatientId_whenAskExistence_thenReturnTrue() throws Exception {
+		// GIVEN
+		Patient patient = new Patient("coco", "lerigolo", new Date(1985 - 04 - 31), "44 rue des zouaves",
+				"100-111-3333", Patient.Sex.M);
+		String jsonResponse = mockMvc
+				.perform(post("/rest/patient").contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(patient)))
+				.andReturn().getResponse().getContentAsString();
+		Long patientId = ((Integer) JsonPath.parse(jsonResponse).read("$.patientId")).longValue();
+
+		// WHEN THEN
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/rest/patient/exist/{id}", patientId).accept(MediaType.APPLICATION_JSON))
+				.andDo(print()).andExpect(status().isOk());
+	}
+
 	@Test
 	void givenAPatient_whenPutPatient_thenReturns200AndUpdatedPatient() throws Exception {
 		// GIVEN
@@ -94,6 +107,20 @@ public class PatientRestControllerIT {
 				.content(objectMapper.writeValueAsString(updatedPatient))).andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.givenName").value("Test2"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.address").value("22 Rico St"));
+	}
+
+	@Test
+	void givenAUser_whenDeleteUser_thenReturns200() throws Exception {
+		Patient newPatient = new Patient("Test", "TestNone", new Date(1966 - 12 - 31), "1 Brookside St", "100-222-3333",
+				Patient.Sex.F);
+		String jsonResponse = mockMvc
+				.perform(post("/rest/patient").contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(newPatient)))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+		Long newPatientId = ((Integer) JsonPath.parse(jsonResponse).read("$.patientId")).longValue();
+
+		mockMvc.perform(MockMvcRequestBuilders.delete("/rest/patient/{id}", newPatientId)).andExpect(status().isOk());
 	}
 
 }

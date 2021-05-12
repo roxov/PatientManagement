@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,4 +54,12 @@ public class PatientRestController {
 		LOGGER.info("Asking for existence of patient with id : " + patientId);
 		return patientService.askExistenceOfPatient(patientId);
 	}
+
+	@DeleteMapping(value = "/{id}")
+	public String deletePatientById(@PathVariable("id") @NotNull(message = "patient id is compulsory") Long patientId) {
+		LOGGER.info("Deleting patient identified by id : " + patientId);
+		patientService.deletePatient(patientId);
+		return "The patient with id :" + patientId + " is deleted.";
+	}
+
 }

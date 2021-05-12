@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import fr.asterox.PatientManagement.bean.Patient;
 import fr.asterox.PatientManagement.repository.IPatientRepository;
+import fr.asterox.PatientManagement.util.ExistingPatientException;
 import fr.asterox.PatientManagement.util.NoPatientException;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,7 +64,7 @@ public class PatientServiceTest {
 		when(patientRepository.findAllByFamilyName("TestBorderline")).thenReturn(patientsWithSameFamilyName);
 
 		// WHEN
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+		Exception exception = assertThrows(ExistingPatientException.class, () -> {
 			patientService.addPatient(borderlinePatient);
 		});
 
@@ -192,4 +193,18 @@ public class PatientServiceTest {
 		verify(patientRepository, Mockito.times(1)).findById(1L);
 		assertEquals(exception.getMessage(), "This patient does not exist.");
 	}
+
+	@Test
+	public void givenANonexistentPatient_whenAskExistenceOfPatient_thenReturnFalse() {
+		// GIVEN
+		when(patientRepository.findById(1L)).thenReturn(Optional.empty());
+
+		// WHEN
+		boolean result = patientService.askExistenceOfPatient(1L);
+
+		// THEN
+		verify(patientRepository, Mockito.times(1)).findById(1L);
+		assertEquals(false, result);
+	}
+
 }

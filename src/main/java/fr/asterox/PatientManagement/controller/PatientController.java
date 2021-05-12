@@ -101,4 +101,18 @@ public class PatientController {
 				.build();
 	}
 
+	@GetMapping("/patient/{id}/notes")
+	public ResponseEntity<Void> getPatientNotes(@PathVariable("id") Long patientId) {
+		LOGGER.info("Redirecting to port 8080 to get patient notes");
+		return ResponseEntity.status(HttpStatus.FOUND)
+				.location(URI.create("http://localhost:8080/note/list/patient/" + patientId)).build();
+	}
+
+	@GetMapping("/patient/{id}/report")
+	public ResponseEntity<Void> getPatientReport(@PathVariable("id") Long patientId) {
+		LOGGER.info("Redirecting to port 8080 to get patient report");
+		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:8080/assess/" + patientId))
+				.build();
+	}
+
 }

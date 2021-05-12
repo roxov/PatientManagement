@@ -45,6 +45,10 @@
 				</tr>
 			</tbody>
 		</table>
+		<div>
+			<a th:href="@{/patient/{id}/notes(id=${patient.patientId})}">Get patient notes</a>&nbsp;|&nbsp;
+			<a th:href="@{/patient/{id}/report(id=${patient.patientId})}">Get patient diabetes report</a>
+		</div>
 	</div>
 </div>
 </body>
